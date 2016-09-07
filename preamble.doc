@@ -1,0 +1,43 @@
+# Arguments : defined on the command line.
+# 1 - run identifier (pid)
+# 2 - bundle number (bundle)
+# 3 - thread number for this echo file (g)
+# 4 - seed value (seed)
+# 5 - typing speed in cps (cps)
+# 6 - per-transaction think time (think)
+# 7 - number of transactions (ntrans)
+# 8 - extra argument 1 (server_1; available for application use)
+# 9 - extra argument 2 (server_2; available for application use)
+#
+# This script needs to generate commands for ptydrive.
+#
+#   -  ptydrive takes its instructions from the input stream with respect
+#      to:
+#      - Typing rates (the R command)
+#      - Sleeps (the W command)
+#      - Timestamps (the T command)
+#        A Timestamp command  starts a timestamp sequence; the other
+#        timestamps are looked for.
+#
+#        Further timestamps are written when the appropriate events are spotted.
+#
+#   -  The input definition is terminal independent rather than RDBMS
+#      forms specific, and is based on either TERMINFO (standard) or
+#      TERMCAP (when terminfo is not supported, ie. old Ultrix)
+#
+# Whitespace and comments are ignored.
+# Command sequences control timestamping, think times etc..
+# - S details; declare a timestamp
+# - Tlabel; take a timestamp, and label it with the label
+# - Wwait time; wait this number of seconds
+# - Rtyping rate; keys per second
+#
+# key sequences are inserted into the pty buffer as individual
+# characters if they are delimited by ' or ", and as a single key
+# stroke if they are enclosed in `. In the latter case, the \ is an
+# escape character, should the ` itself or a \ be in the escape sequence
+# Thus we cater for escape sequences that have not been defined with
+# terminfo or termcap.
+# 
+# No single sequence should be more than BUFLEN (4096) characters.
+#

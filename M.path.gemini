@@ -1,0 +1,58 @@
+#
+# @(#) $Name$ $Id$
+# Copyright (c) E2 Systems Limited 1993
+#
+# M.path - Make file for the PATH product
+#
+all: tosecs ptydrive fdreport
+	@echo "Forms driver programs are up to date"
+
+sedrive: ptydrive.c
+	$(CC) $(SEFLAGS) -o sedrive ptydrive.c \
+	 ptytty.c timestamp.c circadm.c circlib.c matchlib.c \
+	ttlex.c $(HLIBS)
+
+fdreport: fdreport.o pathatlib.a
+	$(CC) $(CFLAGS) -o fdreport fdreport.o $(PATHLIBS)
+
+ptydrive: ptydrive.o pathatlib.a
+	$(CC) $(CATFLAGS) -o ptydrive ptydrive.o $(PATHLIBS)
+tosecs: tosecs.o
+	$(CC) $(CFLAGS) -o tosecs tosecs.o $(HLIBS)
+
+ptydrive.o: ptydrive.c matchlib.h circlib.h ptytty.h
+	$(CC) $(CATFLAGS) -c ptydrive.c
+
+pathatlib.a: ptytty.o timestamp.o circadm.o circlib.o matchlib.o \
+             ttlex.o pathdlib.o sbspec.o
+	$(AR) $@ $?
+	$(RANLIB) $@
+ptytty.o: ptytty.c matchlib.h circlib.h ptytty.h
+	$(CC) $(CATFLAGS) -DONE_STRING -DSBC -c ptytty.c
+
+matchlib.o: matchlib.c matchlib.h circlib.h
+	$(CC) $(CATFLAGS)  -c matchlib.c
+
+ttlex.o: ttlex.c matchlib.h circlib.h
+	$(CC) $(CATFLAGS) -DSBC -c ttlex.c
+
+timestamp.o: timestamp.c matchlib.h
+	$(CC) $(CATFLAGS) -c timestamp.c
+
+circlib.o: circlib.c circlib.h matchlib.h
+	$(CC) $(CATFLAGS) -c circlib.c
+
+circadm.o: circadm.c circlib.h matchlib.h
+	$(CC) $(CATFLAGS) -c circadm.c
+
+#pathdlib.o: pathdlib.c matchlib.h circlib.h
+#	$(CC) -gx -DNOSTDIO -DOSF -DPOSIX -DPATH_AT -DATT  -I. -I../e2common -c pathdlib.c
+
+pathdlib.o: pathdlib.c matchlib.h circlib.h
+	$(CC) $(CATFLAGS) -DATT -c pathdlib.c
+
+fdreport.o: fdreport.c circlib.h matchlib.h
+	$(CC) $(CATFLAGS) -c fdreport.c
+
+sbspec.o:  sbspec.c matchlib.h circlib.h
+	$(CC) $(CATFLAGS) -c sbspec.c

@@ -1,0 +1,52 @@
+# Awk program to generate an echo file for a transaction
+#
+# @(#)preamble	1.1 93/05/20 22:34:37 93/05/25 20:05:11
+# Copyright (c) E2 Systems, 1992
+#     
+#       +++++++++++++++++++++++++++++++++++++++++++++++++
+#       + Scottish Office benchmark  27/2/95 to 10/3/95 +
+#       +++++++++++++++++++++++++++++++++++++++++++++++++
+#
+#       Parameters for use within script
+#       ================================
+#	parameter	purpose				default
+#
+#	bundle		differentiates scripts		1
+#	g		thread number			0
+#	ntrans 		for loop control 		1
+#	think		pause and minimum event time	as fdvars.sh
+#	cps		typing speed			as fdvars.sh
+#	runtype		M or m for multi-user		-
+#	para_1		Any parameter 			-
+#	para_2		Any parameter			-
+#
+END   {
+# Assumed field separator for data files
+FS=":"
+if(runtype=="m" || runtype=="M") {
+# For multi-user running
+timeout=1800
+}
+else
+# Single user testing
+{
+timeout=10
+bundle=1
+g=0
+ntrans=3
+# para_1 is first user number (1 to 300)
+para_1=1
+}
+print "\\R" cps "\\       # Typing speed- characters per second #"
+print "\\W" think "\\     # Wait time set to whatever #"
+#
+# End of standard preamble
+# ***********************************************************************
+#g1=g+para_1
+#if(g1<10) print "'su - U00000" g1 "'"
+#if(g1>99) print "'su - U000" g1 "'"
+#if(g1>10 && g1<100) print "'su - U0000" g1 "'"
+#print "\\SA0:3600:ARROWS::enter application\\"
+#print "\\TA0:\\"
+#print "'
+'"

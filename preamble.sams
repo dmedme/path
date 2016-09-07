@@ -1,0 +1,75 @@
+# Awk program to generate an echo file for a transaction
+#
+# @(#)preamble	1.1 93/05/20 22:34:37 93/05/25 20:05:11
+# Copyright (c) E2 Systems, 1992
+#     
+#       ++++++++++++++++++++++++++++++++++++++++++++
+#       + Channel 4 Multi-Channel SAMS Stress Test +
+#       ++++++++++++++++++++++++++++++++++++++++++++
+#
+#       Parameters for use within script
+#       ================================
+#	parameter	purpose				default
+#
+#	bundle		differentiates scripts		1
+#	g		thread number			0
+#	ntrans 		for loop control 		1
+#	think		pause and minimum event time	as fdvars.sh
+#	cps		typing speed			as fdvars.sh
+#	runtype		M or m for multi-user		-
+#	para_1		Any parameter 			-
+#	para_2		Any parameter			-
+#
+END   {
+# Assumed field separator for data files
+FS=":"
+if(runtype=="m" || runtype=="M") {
+# For multi-user running
+timeout=1800
+}
+else
+# Single user testing
+{
+timeout=30
+bundle=1
+g=0
+ntrans=3
+# para_1 is first user number (1 to 300)
+para_1=1
+}
+print "\\R" cps "\\       # Typing speed- characters per second #"
+print "\\W" think "\\     # Wait time set to whatever #"
+#
+# End of completely standard preamble
+# ***********************************************************************
+print "\\SL1:" timeout ":Password::Password \\"
+print "\\TL1:\\"
+print "`exec su - GRUMPY"
+print "`"
+print "\\SL2:" timeout ":f64[::Sign-on \\"
+print "\\TL2:\\"
+print "`passw1rd\r`"
+print "\\SL3:" timeout ":Logged On ::Main menu \\"
+print "\\TL3:\\"
+comm="$PATH_HOME/path/valfetch.sh $PATH_HOME/data/USERS.db " bundle " " g " " ntrans
+comm|getline
+usr=$1
+pwd=$2
+print "`ON		" usr "channel4" pwd "	`"
+# End of Channel 4 SAMS login sequence
+# ***********************************************************************
+# Event/Key sequence for guaranteeing a menu prompt of some kind
+# Output this string at the bottom of the loop
+#
+print "\\SL4:" timeout ":.[h.h.f! .::Restore Menu prompt \\"
+get_prompt =  "\\TL4:\\ `^`"
+#
+# Prototype data read routine; substitute the correct data file name
+#
+comm1="$PATH_HOME/path/valfetch.sh $PATH_HOME/data/PRODS.db " bundle " " g " " ntrans
+#
+# Main process; loop through the available data
+#
+while(comm1|getline) {
+# End of Channel 4 Standard preamble
+# ***********************************************************************
